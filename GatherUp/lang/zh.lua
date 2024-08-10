@@ -5,6 +5,7 @@ GU.Lang = {
   KEYBIND           = "开关GU界面",
   
   BUTTON_QUEUE_RUN  = "自动邀请",
+  BUTTON_QUEUE_RUN_TOOLISH = "(左键) 单次邀请\r\n(右键) 循环模式\r\n* 循环模式随持续时长，可能导致掉线",
   BUTTON_QUEUE_STOP = "停止",
   BUTTON_QUEUE_NL   = "非队长",
   

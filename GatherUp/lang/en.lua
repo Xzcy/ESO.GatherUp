@@ -5,6 +5,7 @@ GU.Lang = {
   KEYBIND           = "Open/Close GU",
   
   BUTTON_QUEUE_RUN  = "AutoRun",
+  BUTTON_QUEUE_RUN_TOOLISH = "(Left-Click) Single\r\n(Right-Click) Loop Mode\r\n* Loop Mode may cause disconnection over time",
   BUTTON_QUEUE_STOP = "Stop",
   BUTTON_QUEUE_NL   = "Not Leader",
   

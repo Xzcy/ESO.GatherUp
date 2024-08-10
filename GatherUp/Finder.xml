@@ -112,7 +112,13 @@
         <Button name ="$(parent)_Queue" inherits ="ZO_DefaultButton" fon="MAGU_Font_WinH4">
           <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-30" offsetY="-30"/>
           <OnInitialized> self:SetText(MAGatherUp.Lang.BUTTON_QUEUE_RUN) </OnInitialized>
-          <OnClicked> MAGatherUp.Start(self) </OnClicked>
+          <MouseButton button="2" enabled="true"/>
+          <OnClicked> MAGatherUp.Start(...) </OnClicked>
+          <OnMouseEnter> 
+            InitializeTooltip(InformationTooltip, self, BOTTOM, 0, 0, TOP)
+            SetTooltipText(InformationTooltip, MAGatherUp.Lang.BUTTON_QUEUE_RUN_TOOLISH)
+          </OnMouseEnter>
+          <OnMouseExit> ClearTooltip(InformationTooltip) </OnMouseExit>
         </Button>
         
       </Controls>
@@ -132,6 +138,11 @@
             mouseOver= "esoui/art/lfg/lfg_indexicon_group_over.dds"
           />
           <OnMouseUp> MAGatherUp.Whisper(self) </OnMouseUp>
+          <OnMouseEnter> 
+            InitializeTooltip(InformationTooltip, self, BOTTOM, 0, 0, TOP)
+            SetTooltipText(InformationTooltip, GetString(SI_PLAYER_TO_PLAYER_WHISPER))
+          </OnMouseEnter>
+          <OnMouseExit> ClearTooltip(InformationTooltip) </OnMouseExit>
         </Button>
         
         <EditBox name="$(parent)_Name" inherits="ZO_DefaultEditForBackdrop" defaultText="@...?">

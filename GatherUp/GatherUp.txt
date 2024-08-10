@@ -1,9 +1,9 @@
 ## Title: GatherUp
 ## Description: Gather your trial teammates faster.
 ## Author: @MelanAster
-## APIVersion: 101040 101041
-## AddOnVersion: 1
-## Version: 0.10
+## APIVersion: 101042
+## AddOnVersion: 2
+## Version: 0.20
 ## SavedVariables: GatherUp_Vars
 
 ## This Add-on is not created by, affiliated with or sponsored by ZeniMax Media Inc. or its affiliates. 

@@ -245,28 +245,28 @@ end
 
 --Button Start
 local OnWork = false
-function GU.Start(Control, Done)
-  if Done == nil then
+function GU.Start(Control, Key)
+  if Key == 0 then
+    OnWork = false
+  else --Left/Right
     OnWork = not OnWork
-  else
-    OnWork = Done
   end
   if OnWork then
-    Control:SetText(GU.Lang.BUTTON_QUEUE_STOP)
     GU.BanAlert(true)
-    EVENT_MANAGER:RegisterForUpdate("GatherUP_Cycle", 2000, GU.Invite)
+    if Key == 1 then --Left Click
+      GU.Invite(true)
+    end
+    if Key == 2 then --Right Click
+      Control:SetText(GU.Lang.BUTTON_QUEUE_STOP)
+      EVENT_MANAGER:RegisterForUpdate("GatherUP_Cycle", 4000, GU.Invite)
+    end
     d("[GU] "..GU.Lang.CHAT_START)
   else
-    Control:SetText(GU.Lang.BUTTON_QUEUE_RUN)
     --Reset
+    Control:SetText(GU.Lang.BUTTON_QUEUE_RUN)
     GU.BanAlert(false)
     EVENT_MANAGER:UnregisterForUpdate("GatherUP_Cycle")
     GU.InviteQueue = {}
-    --[[
-    for i = 2, 12 do
-      GU.Controls[i]:GetNamedChild("_Name"):SetEditEnabled(true)
-    end
-    ]]
     GU.UpdateWindow()
   end
 end
@@ -277,22 +277,13 @@ end
 GU.InviteQueue = {}
 
 --Invite Cycle
-function GU.Invite()
+function GU.Invite(Single)
   --Not Leader
   if IsUnitGrouped("player") and not IsUnitGroupLeader("player") then
-    MAGU_TopLevel_Queue:SetText(GU.Lang.BUTTON_QUEUE_NL)
-    return
-  else
-    MAGU_TopLevel_Queue:SetText(GU.Lang.BUTTON_QUEUE_STOP)
-  end
-  --Stop
-  if not OnWork then
-    EVENT_MANAGER:UnregisterForUpdate("GatherUP_Cycle")
-    GU.UpdateWindow()
+    d("[GU] "..GU.Lang.BUTTON_QUEUE_NL)
     return
   end
   --Check Status
-  local NumMember = 0
   for Name, Value in pairs(GU.InviteQueue) do
     if Value and IsPlayerInGroup(Name) then
       GU.InviteQueue[Name] = nil
@@ -301,7 +292,6 @@ function GU.Invite()
   --Add Invite Queue from GatherUp
   local Online, Offline = IsOnline()
   for i = 2, 12 do
-    --GU.Controls[i]:GetNamedChild("_Name"):SetEditEnabled(false)
     local Name = GU.Controls[i]:GetNamedChild("_Name"):GetText()
     if Name ~= "" and not IsPlayerInGroup(Name) and not Offline[Name] then
       GU.InviteQueue[Name] = true
@@ -314,6 +304,7 @@ function GU.Invite()
     end
   end
   --Check Character Change for Friends and Guild Members
+  local AnyChange = false
   for i = 1, GetGroupSize() do
     local Tag = "group"..i
     local Name = GetUnitDisplayName(Tag)
@@ -321,17 +312,18 @@ function GU.Invite()
     if IsCharChanged(Name, Char) then
       GroupKickByName(Name)
       GU.InviteQueue[Name] = true
+      AnyChange = true
       d("[GU] "..CHAT_CHANGED.." -> "..Name)
     end
   end
-  --[[
-  --Check Done
-  for Name, Value in pairs(GU.InviteQueue) do
-    if Value then return end
+  --Single Mode
+  if Single == true then
+    if AnyChange then --Character Change, Need One More Cycle
+      zo_callLater(function() GU.Invite(true) end, 3000)
+    else --Single Done
+      GU.Start(MAGU_TopLevel_Queue, 0)
+    end
   end
-  GU.Start(MAGU_TopLevel_Queue, false)
-  d("[GU] "..GU.Lang.CHAT_DONE)
-  ]]
 end
 
 --Ban Alert when Inviting
@@ -349,12 +341,6 @@ end
 
 --When Error with Invitation
 function GU.InviteError(_, _, Response, Display)
-  --[[
-  if Response == GROUP_INVITE_RESPONSE_PLAYER_NOT_FOUND then
-    GU.Start(MAGU_TopLevel_Queue, false)
-    d("[GU] "..zo_strformat(GetString(SI_GROUPINVITERESPONSE0), Display))
-  end
-  ]]
   if Response == GROUP_INVITE_RESPONSE_GROUP_FULL then
     GU.Start(MAGU_TopLevel_Queue, false)
     d("[GU] "..GetString(SI_GROUPINVITERESPONSE6))
@@ -368,7 +354,7 @@ end
 --Trial Start
 function GU.TrialStart()
   if OnWork then
-    GU.Start(MAGU_TopLevel_Queue, false)
+    GU.Start(MAGU_TopLevel_Queue, 0)
     d("[GU] "..GU.Lang.CHAT_DONE)
   end
 end
